@@ -4,6 +4,7 @@ import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.ClearAll
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
@@ -49,6 +52,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -146,6 +151,12 @@ fun Home(modifier: Modifier, voiceTextParser: VoiceTextParser, homeViewModel: Ho
 
         Column(modifier.fillMaxSize()) {
 
+            Image(
+                painterResource(R.drawable.logo),
+                contentDescription = "",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(80.dp,100.dp).padding(vertical = 5.dp).fillMaxWidth().align(Alignment.CenterHorizontally)
+            )
 
             Text(
                 text = stringResource(R.string.intelligence_data_management_tool_text),
@@ -197,9 +208,8 @@ fun Home(modifier: Modifier, voiceTextParser: VoiceTextParser, homeViewModel: Ho
             Spacer(modifier = modifier.height(20.dp))
             Row(
                 modifier = modifier
-                    .padding(5.dp)
-                    .width(200.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .padding(5.dp).fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 ExtendedFloatingActionButton(
                     text = { Text(text = "EN") },
@@ -233,6 +243,19 @@ fun Home(modifier: Modifier, voiceTextParser: VoiceTextParser, homeViewModel: Ho
                     icon = {
                         Icon(
                             if (state.isSpeaking) Icons.Filled.Stop else Icons.Filled.Mic,
+                            ""
+                        )
+                    }
+                )
+                ExtendedFloatingActionButton(
+                    text = { Text(text = "Clear") },
+                    backgroundColor = Color.Gray.copy(alpha = 0.8f),
+                    onClick = {
+                        homeViewModel.updateText("")
+                    },
+                    icon = {
+                        Icon(
+                           Icons.Filled.Clear ,
                             ""
                         )
                     }

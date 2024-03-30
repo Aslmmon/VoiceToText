@@ -121,7 +121,7 @@ fun EditText(textEnterd: String, onTextChanged: (String) -> Unit) {
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp)
+            .height(200.dp)
             .padding(start = 15.dp, top = 10.dp, end = 15.dp)
             .background(Color.White, RoundedCornerShape(5.dp)),
         shape = RoundedCornerShape(5.dp),
