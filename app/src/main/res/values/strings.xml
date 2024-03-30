@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">IDMT</string>
+    <string name="home">Home</string>
+    <string name="Database">Database</string>
+    <string name="date">Date : </string>
+    <string name="section_name">Section name :</string>
+    <string name="notes">notes : </string>
+    <string name="intelligence_data_management_tool_text">Intelligence Data Management Tool</string>
+</resources>
