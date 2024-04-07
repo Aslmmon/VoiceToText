@@ -73,6 +73,8 @@ dependencies {
     implementation (libs.retrofit.square)
     implementation(libs.retrofit.kotlin.serialization)
     implementation(libs.okhttp.logging)
+    implementation (libs.androidx.datastore.preferences)
+
 
 
 

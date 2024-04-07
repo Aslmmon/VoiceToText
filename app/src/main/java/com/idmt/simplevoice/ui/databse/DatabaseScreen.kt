@@ -1,13 +1,19 @@
 package com.idmt.simplevoice.ui.databse
 
 import android.annotation.SuppressLint
+import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,24 +34,39 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.idmt.simplevoice.R
+import com.idmt.simplevoice.constants.userType
+import com.idmt.simplevoice.constants.userTypeEnum
+import com.idmt.simplevoice.ui.login.dataStore
 import com.idmt.simplevoice.ui.network.model.ListResponseItem
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
-val dateRanges = listOf("Today", "This Week", "This Month", "Custom")
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun Database(modifier: Modifier, viewModel: DataBaseViewModel) {
     val uiState by viewModel.listState.collectAsState()
     val sectionsState by viewModel.SectionStates.collectAsState()
+    var context = LocalContext.current
+    val userType: Flow<String> = context.dataStore.data
+        .map { preferences ->
+            preferences[userType] ?: ""
+        }
+    var user = userType.collectAsState(initial = "")
 
 //    val selectedSection: MutableState<SECIONS?> = mutableStateOf(null)
 
     LaunchedEffect(sectionsState) {
         viewModel.getList(1, sectionsState.value)
+
     }
     when (uiState) {
         is DataBaseViewModel.UiState.Loading -> {
@@ -89,7 +110,17 @@ fun Database(modifier: Modifier, viewModel: DataBaseViewModel) {
                 )
                 LazyColumn {
                     items(response) { item ->
-                        itemView(modifier, item)
+                        itemView(modifier, item, user.value,
+                            onUpdateClicked = {
+                                Log.e("click", "update")
+                            }, onApproveClicked = {
+
+                            }, onDisapproveClicked = {
+
+                            }, onEditClicked = {
+                                Log.e("click", "edit")
+
+                            })
 
                         Divider(
                             modifier = modifier.padding(10.dp),
@@ -111,8 +142,19 @@ fun Database(modifier: Modifier, viewModel: DataBaseViewModel) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun itemView(modifier: Modifier, item: ListResponseItem) {
+fun itemView(
+    modifier: Modifier,
+    item: ListResponseItem,
+    userType: String,
+    onUpdateClicked: () -> Unit,
+    onApproveClicked: () -> Unit,
+    onDisapproveClicked: () -> Unit,
+    onEditClicked: () -> Unit
+
+
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -120,10 +162,48 @@ fun itemView(modifier: Modifier, item: ListResponseItem) {
     ) {
         Text(text = stringResource(R.string.date) + item.actdate, fontWeight = FontWeight.ExtraBold)
         Spacer(modifier = modifier.height(10.dp))
-        Text(
-            text = stringResource(R.string.section_name) + item.sectionname,
-            fontWeight = FontWeight.Bold
-        )
+        Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(
+                text = stringResource(R.string.section_name) + item.sectionname,
+                fontWeight = FontWeight.Bold,
+                color = if (item.isApproved) Color.Green else Color.Red
+            )
+            if (userType == userTypeEnum.SuperUser.name) {
+                Image(
+                    modifier = modifier
+                        .size(20.dp)
+                        .clickable {
+                            onApproveClicked.invoke()
+                        },
+                    painter = painterResource(id = R.drawable.approve),
+                    contentDescription = ""
+                )
+                Image(
+                    modifier = modifier
+                        .size(15.dp)
+                        .clickable {
+
+                            onDisapproveClicked.invoke()
+                        },
+                    painter = painterResource(id = R.drawable.disapprove),
+                    contentDescription = ""
+                )
+
+            } else {
+                Image(
+                    modifier = modifier
+                        .size(15.dp)
+                        .combinedClickable(onClick = {
+                            onEditClicked.invoke()
+                        }, onLongClick = {
+                            onUpdateClicked.invoke()
+                        }),
+                    painter = painterResource(id = R.drawable.pencil),
+                    contentDescription = ""
+                )
+            }
+
+        }
         Spacer(modifier = modifier.height(10.dp))
         Text(text = stringResource(R.string.notes) + item.note, fontWeight = FontWeight.Light)
 

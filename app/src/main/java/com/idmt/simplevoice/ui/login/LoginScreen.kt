@@ -1,5 +1,6 @@
 package com.idmt.simplevoice.ui.login
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,23 +16,37 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.preferencesDataStore
+import com.idmt.simplevoice.constants.userType
+import com.idmt.simplevoice.constants.userTypeEnum
 import com.idmt.simplevoice.ui.home.components.LoadingButton
 import kotlinx.coroutines.delay
+
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "login")
 
 @Composable
 fun LoginScreen(modifier: Modifier, navigateToHomeScreen: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
+    var context = LocalContext.current
+
 
     LaunchedEffect(loading) {
-      //  if (loading && email.equals("admin")&& password.equals("admin")) {
-        //    delay(3000)
+        if (loading && email.equals("admin") && password.equals("admin")) {
+            delay(3000)
             navigateToHomeScreen.invoke()
-//        }else{
-//            loading=false
-//        }
+            context.dataStore.edit { prefrences ->
+                prefrences[userType] = userTypeEnum.Normal.name
+            }
+        } else {
+            loading = false
+        }
     }
 
     Column(
@@ -58,3 +73,4 @@ fun LoginScreen(modifier: Modifier, navigateToHomeScreen: () -> Unit) {
         }, loading = loading, showIcon = false, buttonText = "Login")
     }
 }
+

@@ -1,6 +1,7 @@
 package com.idmt.simplevoice.ui.home
 
 import android.Manifest
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -53,6 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -90,6 +92,7 @@ fun Home(modifier: Modifier, voiceTextParser: VoiceTextParser, homeViewModel: Ho
     }
     val state by voiceTextParser.state.collectAsState()
     var loading by remember { mutableStateOf(false) }
+    var context = LocalContext.current
 
     val recordLauncher =
         rememberLauncherForActivityResult(
@@ -101,6 +104,7 @@ fun Home(modifier: Modifier, voiceTextParser: VoiceTextParser, homeViewModel: Ho
     LaunchedEffect(recordLauncher) {
         recordLauncher.launch(Manifest.permission.RECORD_AUDIO)
     }
+
 
     DisposableEffect(state.appendText) {
 
