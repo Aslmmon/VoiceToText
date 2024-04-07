@@ -5,6 +5,8 @@ import android.net.ConnectivityManager
 import android.util.Log
 import androidx.core.os.trace
 import com.idmt.simplevoice.ui.network.model.ListResponse
+import com.idmt.simplevoice.ui.network.model.category_response.CategoryDropDownResponse
+import com.idmt.simplevoice.ui.network.model.zone_response.ZonDropDownResponse
 import okhttp3.Call
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -25,14 +27,14 @@ import java.nio.charset.Charset
  * Retrofit API declaration for MovieDb Network API
  */
 private interface RetrofitNetworkApi {
-    @GET(value = "/api/Section/Getrpt")
+    @GET(value = ":97/api/Section/Getrpt")
     suspend fun getList(
         @Query("roleid") roleid: Int,
         @Query("sectionid") sectionid: Int,
     ): ListResponse
 
     @FormUrlEncoded
-    @POST(value = "/api/Section/InsertSectionData")
+    @POST(value = ":97/api/Section/InsertSectionData")
     suspend fun submitText(
         @Field("SectionId") SectionId: Int,
         @Field("Notes") Notes: String,
@@ -40,15 +42,37 @@ private interface RetrofitNetworkApi {
         @Field("SectiondataId") SectiondataId: Int = 0,
 
         ): Unit
+
+
+    @FormUrlEncoded
+    @POST(value = ":97/api/Section/InsertSectionData")
+    suspend fun submitInputEntry(
+        @Field("id") id: Int,
+        @Field("EntryDate") EntryDate: String,
+        @Field("CategoryId") CategoryId: Int,
+        @Field("SubCategoryId") SubCategoryId: Int,
+        @Field("ZoneId") ZoneId: Int = 0,
+        @Field("DistrictId") DistrictId: Int = 0,
+        @Field("StationId") StationId: Int = 0,
+        @Field("InputData") InputData: String,
+
+        ): Unit
+
+
+    @GET(value = ":90/api/InputEntry/CategoryDropdown")
+    suspend fun getCategoryDropDown(): CategoryDropDownResponse
+
+    @GET(value = ":90/api/InputEntry/ZoneDropdown")
+    suspend fun getZoneDropDown(): ZonDropDownResponse
 }
 
 class RetrofitMoviesNetworkApi {
 
     private val networkApi = trace("RetrofitNetwork") {
         Retrofit.Builder()
-            .baseUrl("http://43.254.41.144:97")
+            .baseUrl("http://43.254.41.144")
             .callFactory {
-                    okHttpCallFactory().newCall(it)
+                okHttpCallFactory().newCall(it)
             }
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -78,14 +102,31 @@ class RetrofitMoviesNetworkApi {
 
     suspend fun getList(roleid: Int, sectionid: Int) =
         networkApi.getList(roleid = roleid, sectionid = sectionid)
+
+    suspend fun getZoneDropDown() =
+        networkApi.getZoneDropDown()
+
+    suspend fun getCategoryDropDown() =
+        networkApi.getCategoryDropDown()
+
+    suspend fun submitInputEntry() =
+        networkApi.submitInputEntry(
+            id = 0,
+            EntryDate = "",
+            CategoryId = 0,
+            SubCategoryId = 0,
+            ZoneId = 0,
+            StationId = 0,
+            InputData = ""
+        )
 }
 
 class ErrorResponseInterceptor : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
 
-            val response = chain.proceed(chain.request())
-            val code = response.code
+        val response = chain.proceed(chain.request())
+        val code = response.code
         try {
 
             if (code in 400..500) {
@@ -94,7 +135,7 @@ class ErrorResponseInterceptor : Interceptor {
 
                 }
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             Log.e("error", e.message.toString())
 
         }

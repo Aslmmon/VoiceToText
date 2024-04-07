@@ -13,6 +13,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cached
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Input
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -29,6 +30,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.idmt.simplevoice.recognition.VoiceTextParser
+import com.idmt.simplevoice.ui.InputEntry.InputEntry
 import com.idmt.simplevoice.ui.databse.DataBaseViewModel
 import com.idmt.simplevoice.ui.databse.Database
 import com.idmt.simplevoice.ui.home.Home
@@ -83,6 +85,7 @@ fun MainScreen(voiceTextParser: VoiceTextParser) {
     val bottomNavigationItems = listOf(
         BottomNavigationScreens.Home,
         BottomNavigationScreens.DataBase,
+        BottomNavigationScreens.InputEntryScreen,
 
         )
     Scaffold(
@@ -104,6 +107,12 @@ sealed class BottomNavigationScreens(
         "DataBase",
         resourceId = R.string.Database,
         Icons.Filled.Cached
+    )
+
+    object InputEntryScreen : BottomNavigationScreens(
+        "Input",
+        resourceId = R.string.input,
+        Icons.Filled.Input
     )
 }
 
@@ -154,10 +163,13 @@ private fun MainScreenNavigationConfigurations(
         Modifier.padding(paddingValues)
     ) {
         composable(BottomNavigationScreens.Home.route) {
-            Home(modifier = Modifier, voiceTextParser,homeViewModel)
+            Home(modifier = Modifier, voiceTextParser, homeViewModel)
         }
         composable(BottomNavigationScreens.DataBase.route) {
-            Database(modifier = Modifier,dataBaseViewModel)
+            Database(modifier = Modifier, dataBaseViewModel)
+        }
+        composable(BottomNavigationScreens.InputEntryScreen.route) {
+            InputEntry(modifier = Modifier)
         }
     }
 }

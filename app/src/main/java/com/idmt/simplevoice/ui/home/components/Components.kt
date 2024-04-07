@@ -162,7 +162,8 @@ fun LoadingButton(
     onClick: () -> Unit,
     loading: Boolean,
     buttonText:String,
-    showIcon:Boolean=true
+    showIcon:Boolean=true,
+    modifier: Modifier = Modifier
 ) {
     val transition = updateTransition(
         targetState = loading,
@@ -179,7 +180,7 @@ fun LoadingButton(
     )
     Button(
         onClick = onClick,
-        modifier = Modifier.defaultMinSize(minWidth = 1.dp),
+        modifier = modifier.defaultMinSize(minWidth = 1.dp),
         contentPadding = PaddingValues(
             horizontal = horizontalContentPadding,
             vertical = 8.dp,

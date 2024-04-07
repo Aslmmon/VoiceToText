@@ -26,12 +26,12 @@ fun LoginScreen(modifier: Modifier, navigateToHomeScreen: () -> Unit) {
     var loading by remember { mutableStateOf(false) }
 
     LaunchedEffect(loading) {
-        if (loading && email.equals("admin")&& password.equals("admin")) {
-            delay(3000)
+      //  if (loading && email.equals("admin")&& password.equals("admin")) {
+        //    delay(3000)
             navigateToHomeScreen.invoke()
-        }else{
-            loading=false
-        }
+//        }else{
+//            loading=false
+//        }
     }
 
     Column(
@@ -41,7 +41,7 @@ fun LoginScreen(modifier: Modifier, navigateToHomeScreen: () -> Unit) {
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") }
+            label = { Text("Email") },
         )
 
         Spacer(modifier = modifier.height(20.dp))
