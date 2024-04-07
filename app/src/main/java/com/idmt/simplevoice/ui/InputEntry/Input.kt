@@ -29,6 +29,7 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
     var loading by remember { mutableStateOf(false) }
     var textEnterd by remember { mutableStateOf("") }
     val uiState by inputViewModel.categoryState.collectAsState()
+    val subCategory by inputViewModel.subCategories.collectAsState()
 
     Column(
         modifier = modifier
@@ -48,14 +49,15 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
             }
 
             is InputViewModel.UiState.Success -> {
-                Text(text = (uiState as InputViewModel.UiState.Success).data.toString())
+                val CategoriesPairs = (uiState as InputViewModel.UiState.Success).data
+//                Text(text = (uiState as InputViewModel.UiState.Success).data.toString())
                 DropDownEditText(
                     modifier = modifier,
                     label = stringResource(R.string.input_type),
                     onChoosenId = {
-                        Log.e("chosen", it.toString())
+                        inputViewModel.updateSubCategories(it)
                     },
-                    listToBeShown = mutableListOf(Pair("test", 1), Pair("test2", 2))
+                    listToBeShown = CategoriesPairs
                 )
 
 
@@ -65,12 +67,17 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
                     onChoosenId = {
                         Log.e("chosen", it.toString())
                     },
-                    listToBeShown = mutableListOf(Pair("test", 1), Pair("test2", 2))
+                    listToBeShown = subCategory
                 )
 
-                DropDownEditText(modifier = modifier, label = stringResource(R.string.zone), onChoosenId = {
-                    Log.e("chosen", it.toString())
-                }, listToBeShown = mutableListOf(Pair("test", 1), Pair("test2", 2)))
+                DropDownEditText(
+                    modifier = modifier,
+                    label = stringResource(R.string.zone),
+                    onChoosenId = {
+                        Log.e("chosen", it.toString())
+                    },
+                    listToBeShown = mutableListOf(Pair("test", 1), Pair("test2", 2))
+                )
 
                 DropDownEditText(
                     modifier = modifier,
@@ -99,8 +106,6 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
                 }, loading = loading, buttonText = stringResource(R.string.submit))
             }
         }
-
-
 
 
     }

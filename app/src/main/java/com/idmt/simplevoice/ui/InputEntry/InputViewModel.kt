@@ -2,7 +2,6 @@ package com.idmt.simplevoice.ui.InputEntry
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.idmt.simplevoice.ui.databse.DataBaseViewModel
 import com.idmt.simplevoice.ui.network.RetrofitMoviesNetworkApi
 import com.idmt.simplevoice.ui.network.model.category_response.CategoryDropDownResponse
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +17,14 @@ class InputViewModel : ViewModel() {
     val categoryState: MutableStateFlow<UiState> get() = _categoryState
 
 
+    val _subCategories: MutableStateFlow<MutableList<Pair<String, Int>>> =
+        MutableStateFlow(mutableListOf())
+
+    val subCategories: MutableStateFlow<MutableList<Pair<String, Int>>> get() = _subCategories
+
+    var categoryDropDownResponse = CategoryDropDownResponse()
+
+
     init {
         getCategories()
     }
@@ -26,9 +33,13 @@ class InputViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                var list = retrofitMoviesNetworkApi.getCategoryDropDown()
+                categoryDropDownResponse = retrofitMoviesNetworkApi.getCategoryDropDown()
+                val categoryPairs = mutableListOf(Pair("", 0))
+                categoryDropDownResponse.forEachIndexed { index, category ->
+                    categoryPairs.add(Pair(category.categoryName, category.categoryId))
+                }
                 _categoryState.update {
-                    UiState.Success(list)
+                    UiState.Success(categoryPairs)
                 }
             } catch (e: Exception) {
                 _categoryState.update {
@@ -45,9 +56,19 @@ class InputViewModel : ViewModel() {
         }
     }
 
+    fun updateSubCategories(id: Int) {
+        val subCategoryPairs = mutableListOf(Pair("", 0))
+        categoryDropDownResponse.find { it.categoryId == id }?.subCategory?.forEachIndexed { index, subCategory ->
+            subCategoryPairs.add(Pair(subCategory.subCategoryName, subCategory.subCategoryId))
+        }
+        _subCategories.update {
+            subCategoryPairs
+        }
+    }
+
 
     sealed class UiState {
-        data class Success(val data: CategoryDropDownResponse) : UiState()
+        data class Success(val data: MutableList<Pair<String, Int>>) : UiState()
         data class Error(val message: String) : UiState()
         class Loading : UiState()
 

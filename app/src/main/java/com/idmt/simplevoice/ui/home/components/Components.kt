@@ -91,7 +91,7 @@ fun CategoryChooser(
     listOfPairs: MutableList<Pair<String, Int>>,
     onClickCategory: (Int) -> Unit
 ) {
-    var expandedCategory by remember { mutableStateOf(false) }
+//    var expandedCategory by remember { mutableStateOf(false) }
 
 
     DropDownEditText(
