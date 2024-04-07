@@ -27,14 +27,14 @@ import java.nio.charset.Charset
  * Retrofit API declaration for MovieDb Network API
  */
 private interface RetrofitNetworkApi {
-    @GET(value = ":97/api/Section/Getrpt")
+    @GET(value = "/api/Section/Getrpt")
     suspend fun getList(
         @Query("roleid") roleid: Int,
         @Query("sectionid") sectionid: Int,
     ): ListResponse
 
     @FormUrlEncoded
-    @POST(value = ":97/api/Section/InsertSectionData")
+    @POST(value = "/api/Section/InsertSectionData")
     suspend fun submitText(
         @Field("SectionId") SectionId: Int,
         @Field("Notes") Notes: String,
@@ -45,7 +45,7 @@ private interface RetrofitNetworkApi {
 
 
     @FormUrlEncoded
-    @POST(value = ":97/api/Section/InsertSectionData")
+    @POST(value = "/api/InputEntry/Stage1")
     suspend fun submitInputEntry(
         @Field("id") id: Int,
         @Field("EntryDate") EntryDate: String,
@@ -59,10 +59,10 @@ private interface RetrofitNetworkApi {
         ): Unit
 
 
-    @GET(value = ":90/api/InputEntry/CategoryDropdown")
+    @GET(value = "/api/InputEntry/CategoryDropdown")
     suspend fun getCategoryDropDown(): CategoryDropDownResponse
 
-    @GET(value = ":90/api/InputEntry/ZoneDropdown")
+    @GET(value = "/api/InputEntry/ZoneDropdown")
     suspend fun getZoneDropDown(): ZonDropDownResponse
 }
 
@@ -70,7 +70,7 @@ class RetrofitMoviesNetworkApi {
 
     private val networkApi = trace("RetrofitNetwork") {
         Retrofit.Builder()
-            .baseUrl("http://43.254.41.144")
+            .baseUrl("http://43.254.41.144:90")
             .callFactory {
                 okHttpCallFactory().newCall(it)
             }

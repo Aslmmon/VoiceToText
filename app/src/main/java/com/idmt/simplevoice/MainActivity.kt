@@ -31,6 +31,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.idmt.simplevoice.recognition.VoiceTextParser
 import com.idmt.simplevoice.ui.InputEntry.InputEntry
+import com.idmt.simplevoice.ui.InputEntry.InputViewModel
 import com.idmt.simplevoice.ui.databse.DataBaseViewModel
 import com.idmt.simplevoice.ui.databse.Database
 import com.idmt.simplevoice.ui.home.Home
@@ -156,6 +157,7 @@ private fun MainScreenNavigationConfigurations(
 ) {
     val dataBaseViewModel = DataBaseViewModel()
     val homeViewModel = HomeViewModel()
+    val inputViewModel = InputViewModel()
 
     NavHost(
         navController,
@@ -169,7 +171,7 @@ private fun MainScreenNavigationConfigurations(
             Database(modifier = Modifier, dataBaseViewModel)
         }
         composable(BottomNavigationScreens.InputEntryScreen.route) {
-            InputEntry(modifier = Modifier)
+            InputEntry(modifier = Modifier,inputViewModel)
         }
     }
 }
