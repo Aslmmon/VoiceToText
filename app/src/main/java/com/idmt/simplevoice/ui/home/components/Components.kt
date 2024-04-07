@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.idmt.simplevoice.ui.InputEntry.components.DropDownEditText
 import com.idmt.simplevoice.ui.databse.SECIONS
 import com.idmt.simplevoice.ui.home.languagesList
 
@@ -85,35 +86,49 @@ fun LanguageChooser(modifier: Modifier, onLangugeChoosen: (String) -> Unit) {
 
 
 @Composable
-fun CategoryChooser(modifier: Modifier, onClickCategory: (Int) -> Unit) {
+fun CategoryChooser(
+    modifier: Modifier,
+    listOfPairs: MutableList<Pair<String, Int>>,
+    onClickCategory: (Int) -> Unit
+) {
     var expandedCategory by remember { mutableStateOf(false) }
 
-    Button(
-        modifier = modifier.padding(horizontal = 10.dp),
-        onClick = {
-            expandedCategory = !expandedCategory
-        }) {
-        Text(text = "Choose Category")
-        Icon(
-            imageVector = Icons.Default.Person,
-            contentDescription = "More",
-            tint = Color.White
-        )
-        DropdownMenu(
-            expanded = expandedCategory,
-            onDismissRequest = { expandedCategory = false }
-        ) {
-            SECIONS.entries.forEach {
-                DropdownMenuItem(
-                    text = { Text(it.name) },
-                    onClick = {
-                        expandedCategory = false
-                        onClickCategory.invoke(it.value)
-                    }
-                )
-            }
-        }
-    }
+
+    DropDownEditText(
+        modifier = modifier,
+        onChoosenId = {
+            onClickCategory.invoke(it)
+        },
+        listToBeShown = listOfPairs,
+        label = "Category"
+    )
+
+//    Button(
+//        modifier = modifier.padding(horizontal = 10.dp),
+//        onClick = {
+//            expandedCategory = !expandedCategory
+//        }) {
+//        Text(text = "Choose Category")
+//        Icon(
+//            imageVector = Icons.Default.Person,
+//            contentDescription = "More",
+//            tint = Color.White
+//        )
+//        DropdownMenu(
+//            expanded = expandedCategory,
+//            onDismissRequest = { expandedCategory = false }
+//        ) {
+//            SECIONS.entries.forEach {
+//                DropdownMenuItem(
+//                    text = { Text(it.name) },
+//                    onClick = {
+//                        expandedCategory = false
+//                        onClickCategory.invoke(it.value)
+//                    }
+//                )
+//            }
+//        }
+//    }
 }
 
 @Composable
@@ -161,8 +176,8 @@ fun Loader(modifier: Modifier) {
 fun LoadingButton(
     onClick: () -> Unit,
     loading: Boolean,
-    buttonText:String,
-    showIcon:Boolean=true,
+    buttonText: String,
+    showIcon: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val transition = updateTransition(

@@ -35,7 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.idmt.simplevoice.R
 import com.idmt.simplevoice.SharedViewModel
 import com.idmt.simplevoice.recognition.VoiceTextParser
+import com.idmt.simplevoice.ui.databse.SECIONS
 import com.idmt.simplevoice.ui.home.components.CategoryChooser
 import com.idmt.simplevoice.ui.home.components.EditText
 import com.idmt.simplevoice.ui.home.components.LoadingButton
@@ -76,7 +76,6 @@ fun Home(
     }
     val state by voiceTextParser.state.collectAsState()
     var loading by remember { mutableStateOf(false) }
-    var context = LocalContext.current
 
     val recordLauncher =
         rememberLauncherForActivityResult(
@@ -85,6 +84,10 @@ fun Home(
                 canRecord = isGranted
             })
 
+    var listOfPairs = mutableListOf(Pair("", 0))
+    SECIONS.entries.forEach {
+        listOfPairs.add(Pair(it.name,it.value))
+    }
     LaunchedEffect(recordLauncher) {
         recordLauncher.launch(Manifest.permission.RECORD_AUDIO)
     }
@@ -111,40 +114,9 @@ fun Home(
 
     }
 
-//    LaunchedEffect(languageToRecordWith) {
-//        if (state.isSpeaking) {
-//            voiceTextParser.stopListening()
-//        } else {
-//            voiceTextParser.startListening(languages = languageToRecordWith)
-//        }
-//    }
-
 
     Scaffold(floatingActionButton = {
-//        FloatingActionButton(onClick = {
-//            if (state.isSpeaking) {
-//                voiceTextParser.stopListening()
-//            } else {
-//                voiceTextParser.startListening(languages = languageToRecordWith)
-//            }
-//        })
 
-        {
-
-
-            //Simple FAB
-
-//
-//            AnimatedContent(
-//                targetState = state.isSpeaking, label = ""
-//            ) {
-//                if (it) {
-//                    Icon(imageVector = Icons.Rounded.Stop, contentDescription = "")
-//                } else {
-//                    Icon(imageVector = Icons.Rounded.Mic, contentDescription = "")
-//                }
-//            }
-        }
     }) { padding ->
 
         Column(modifier.fillMaxSize()) {
@@ -265,7 +237,7 @@ fun Home(
                 )
             }
 
-            CategoryChooser(modifier = modifier) { sectionId ->
+            CategoryChooser(modifier = modifier.padding(horizontal = 10.dp),listOfPairs) { sectionId ->
                 homeViewModel.updateSection(sectionId)
             }
 
