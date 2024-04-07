@@ -31,6 +31,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -65,8 +68,11 @@ fun Database(
             preferences[userType] ?: ""
         }
     var user = userType.collectAsState(initial = "")
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val comments by viewModel.Comments.collectAsState()
 
-//    val selectedSection: MutableState<SECIONS?> = mutableStateOf(null)
+
+
 
     LaunchedEffect(sectionsState) {
         viewModel.getList(1, sectionsState.value)
@@ -116,7 +122,7 @@ fun Database(
                     items(response) { item ->
                         itemView(modifier, item, user.value,
                             onUpdateClicked = {
-                                Log.e("click", "update")
+                                showBottomSheet = true
                             }, onApproveClicked = {
 
                             }, onDisapproveClicked = {
@@ -135,6 +141,14 @@ fun Database(
                         )
 
                     }
+                }
+
+                if (showBottomSheet) {
+                    BottomSheet(modifier, onDismiss = {
+                        showBottomSheet = false
+                    }, updateText = { newText ->
+                        viewModel.updateComment(newText)
+                    },comments)
                 }
             }
 
@@ -296,3 +310,4 @@ fun getSection(value: Int): SECIONS? {
     val map = SECIONS.entries.associateBy(SECIONS::value)
     return map[value]
 }
+

@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.idmt.simplevoice.ui.network.RetrofitMoviesNetworkApi
 import com.idmt.simplevoice.ui.network.model.ListResponse
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -21,7 +23,11 @@ class DataBaseViewModel : ViewModel() {
     val SectionStates: MutableStateFlow<SECIONS> get() = _SectionStates
 
 
+    private val _Comments: MutableStateFlow<MutableList<String>> = MutableStateFlow(mutableListOf())
+    val Comments: StateFlow<MutableList<String>> = _Comments.asStateFlow()
+
     val selectedSection: MutableState<SECIONS?> = mutableStateOf(null)
+
 
     suspend fun getList(roleid: Int, sectionId: Int) {
 
@@ -45,6 +51,11 @@ class DataBaseViewModel : ViewModel() {
             UiState.Loading()
         }
     }
+
+    fun updateComment(text: String) {
+        _Comments.value.add(text)
+    }
+
 
     fun updateSections(section: SECIONS) {
         _SectionStates.update {
