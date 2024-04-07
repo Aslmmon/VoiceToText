@@ -1,13 +1,11 @@
 package com.idmt.simplevoice.ui.home
 
 import android.Manifest
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,29 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DropdownMenu
 import androidx.compose.material.ExtendedFloatingActionButton
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.ClearAll
 import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.RecordVoiceOver
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.rounded.Mic
-import androidx.compose.material.icons.rounded.Stop
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -61,14 +42,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.idmt.simplevoice.R
+import com.idmt.simplevoice.SharedViewModel
 import com.idmt.simplevoice.recognition.VoiceTextParser
-import com.idmt.simplevoice.ui.databse.SECIONS
 import com.idmt.simplevoice.ui.home.components.CategoryChooser
 import com.idmt.simplevoice.ui.home.components.EditText
-import com.idmt.simplevoice.ui.home.components.LanguageChooser
-import com.idmt.simplevoice.ui.home.components.Loader
 import com.idmt.simplevoice.ui.home.components.LoadingButton
-import kotlinx.coroutines.delay
+import com.idmt.simplevoice.ui.network.model.ListResponseItem
 
 
 const val English = "en-US"
@@ -80,7 +59,12 @@ val languagesList = mutableListOf(
 
 
 @Composable
-fun Home(modifier: Modifier, voiceTextParser: VoiceTextParser, homeViewModel: HomeViewModel) {
+fun Home(
+    modifier: Modifier,
+    voiceTextParser: VoiceTextParser,
+    homeViewModel: HomeViewModel,
+    sharedViewModel: SharedViewModel<ListResponseItem>
+) {
 
     val homeUiState by homeViewModel.homeUiState.collectAsState()
     val textSpokenState by homeViewModel.textSpoken.collectAsState()
@@ -110,10 +94,20 @@ fun Home(modifier: Modifier, voiceTextParser: VoiceTextParser, homeViewModel: Ho
 
         onDispose {
             if (state.appendText == true) {
-                homeViewModel.updateText(textSpokenState + state.isSpoken)
+                homeViewModel.updateText(textSpokenState + " " + state.isSpoken + " ")
             }
-          state.appendText = false
+            state.appendText = false
         }
+
+    }
+
+    LaunchedEffect(sharedViewModel.isEdit) {
+
+        if (sharedViewModel.isEdit.value) {
+            homeViewModel.updateText(sharedViewModel.data.value?.note ?: "")
+            homeViewModel.updateSectionDataId(sharedViewModel.data.value?.section_Dataid ?: 0)
+        }
+
 
     }
 
@@ -159,7 +153,11 @@ fun Home(modifier: Modifier, voiceTextParser: VoiceTextParser, homeViewModel: Ho
                 painterResource(R.drawable.logo),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(80.dp,100.dp).padding(vertical = 5.dp).fillMaxWidth().align(Alignment.CenterHorizontally)
+                modifier = Modifier
+                    .size(80.dp, 100.dp)
+                    .padding(vertical = 5.dp)
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
             )
 
             Text(
@@ -212,7 +210,8 @@ fun Home(modifier: Modifier, voiceTextParser: VoiceTextParser, homeViewModel: Ho
             Spacer(modifier = modifier.height(20.dp))
             Row(
                 modifier = modifier
-                    .padding(5.dp).fillMaxWidth(),
+                    .padding(5.dp)
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 ExtendedFloatingActionButton(
@@ -259,22 +258,15 @@ fun Home(modifier: Modifier, voiceTextParser: VoiceTextParser, homeViewModel: Ho
                     },
                     icon = {
                         Icon(
-                           Icons.Filled.Clear ,
+                            Icons.Filled.Clear,
                             ""
                         )
                     }
                 )
             }
-//            LanguageChooser(modifier) { language ->
-//                languageToRecordWith = when (language) {
-//                    "English" -> English
-//                    else -> Hindi
-//                }
-//            }
 
             CategoryChooser(modifier = modifier) { sectionId ->
                 homeViewModel.updateSection(sectionId)
-
             }
 
 
@@ -284,10 +276,9 @@ fun Home(modifier: Modifier, voiceTextParser: VoiceTextParser, homeViewModel: Ho
                 },
                 loading = loading,
                 showIcon = true,
-                buttonText = "Save"
+                buttonText = if (sharedViewModel.isEdit.value) "Edit" else "Save"
             )
             Spacer(modifier = modifier.height(50.dp))
-
 
         }
     }

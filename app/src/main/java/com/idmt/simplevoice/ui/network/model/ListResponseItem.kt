@@ -4,5 +4,6 @@ data class ListResponseItem(
     val actdate: String,
     val sectionname: String,
     val note:String,
-    val isApproved:Boolean
+    val isApproved:Boolean,
+    val section_Dataid:Int
 )

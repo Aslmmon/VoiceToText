@@ -1,6 +1,5 @@
 package com.idmt.simplevoice
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,14 +19,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -41,6 +40,7 @@ import com.idmt.simplevoice.ui.databse.Database
 import com.idmt.simplevoice.ui.home.Home
 import com.idmt.simplevoice.ui.home.HomeViewModel
 import com.idmt.simplevoice.ui.login.LoginScreen
+import com.idmt.simplevoice.ui.network.model.ListResponseItem
 import com.idmt.simplevoice.ui.theme.SimpleVoiceTheme
 
 val KEY_ROUTE: String? = "route"
@@ -138,6 +138,7 @@ private fun SpookyAppBottomNavigation(
                 onClick = {
                     // This if check gives us a "singleTop" behavior where we do not create a
                     // second instance of the composable if we are already on that destination
+
                     if (currentRoute != screen.route) {
                         navController.navigate(screen.route)
                     }
@@ -162,6 +163,7 @@ private fun MainScreenNavigationConfigurations(
     val dataBaseViewModel = DataBaseViewModel()
     val homeViewModel = HomeViewModel()
     val inputViewModel = InputViewModel()
+    val sharedViewModel = SharedViewModel<ListResponseItem>()
 
     NavHost(
         navController,
@@ -169,14 +171,35 @@ private fun MainScreenNavigationConfigurations(
         Modifier.padding(paddingValues)
     ) {
         composable(BottomNavigationScreens.Home.route) {
-            Home(modifier = Modifier, voiceTextParser, homeViewModel)
+            Home(modifier = Modifier, voiceTextParser, homeViewModel, sharedViewModel)
         }
         composable(BottomNavigationScreens.DataBase.route) {
-            Database(modifier = Modifier, dataBaseViewModel)
+            Database(modifier = Modifier, dataBaseViewModel, returnBackHome = {
+                navController.navigate(BottomNavigationScreens.Home.route)
+            }, sharedViewModel)
         }
         composable(BottomNavigationScreens.InputEntryScreen.route) {
-            InputEntry(modifier = Modifier,inputViewModel)
+            InputEntry(modifier = Modifier, inputViewModel)
         }
     }
 }
+
+class SharedViewModel<T> : ViewModel() {
+    private val _data = mutableStateOf<T?>(null)
+    val data: State<T?> = _data
+
+    private val _isEdit = mutableStateOf<Boolean>(false)
+    val isEdit: State<Boolean> = _isEdit
+
+    fun setData(newData: T) {
+        _data.value = newData
+        _isEdit.value = true
+    }
+
+    fun clearData() {
+        _data.value = null
+        _isEdit.value = false
+    }
+}
+
 

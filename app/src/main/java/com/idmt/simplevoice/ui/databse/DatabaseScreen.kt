@@ -40,19 +40,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.idmt.simplevoice.R
+import com.idmt.simplevoice.SharedViewModel
 import com.idmt.simplevoice.constants.userType
 import com.idmt.simplevoice.constants.userTypeEnum
 import com.idmt.simplevoice.ui.login.dataStore
 import com.idmt.simplevoice.ui.network.model.ListResponseItem
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun Database(modifier: Modifier, viewModel: DataBaseViewModel) {
+fun Database(
+    modifier: Modifier,
+    viewModel: DataBaseViewModel,
+    returnBackHome: () -> Unit,
+    sharedViewModel: SharedViewModel<ListResponseItem>
+) {
     val uiState by viewModel.listState.collectAsState()
     val sectionsState by viewModel.SectionStates.collectAsState()
     var context = LocalContext.current
@@ -119,6 +123,8 @@ fun Database(modifier: Modifier, viewModel: DataBaseViewModel) {
 
                             }, onEditClicked = {
                                 Log.e("click", "edit")
+                                returnBackHome.invoke()
+                                sharedViewModel.setData(item)
 
                             })
 

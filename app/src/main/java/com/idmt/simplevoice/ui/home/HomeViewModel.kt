@@ -25,9 +25,13 @@ class HomeViewModel : ViewModel() {
     private var _sectionToSend: MutableStateFlow<Int> = MutableStateFlow(1)
     val sectionChosen: MutableStateFlow<Int> get() = _sectionToSend
 
+    private var _sectionDataIdToSend: MutableStateFlow<Int> = MutableStateFlow(0)
+    val sectionDataIdToSend: MutableStateFlow<Int> get() = _sectionDataIdToSend
+
     init {
-        _textToSend.value=""
+        _textToSend.value = ""
     }
+
     fun submitText() {
 
         viewModelScope.launch {
@@ -38,8 +42,9 @@ class HomeViewModel : ViewModel() {
                     }
                     delay(2000)
                     val data = retrofitMoviesNetworkApi.submitText(
-                        secitonId = sectionChosen.value,
-                        notes = textSpoken.value
+                        secitonId = _sectionToSend.value,
+                        notes = _textToSend.value,
+                        sectionDataId =_sectionDataIdToSend.value
                     )
                     _homeUiState.update {
                         HomeUiState.Success(data)
@@ -64,6 +69,12 @@ class HomeViewModel : ViewModel() {
 
     fun updateSection(newSection: Int) {
         _sectionToSend.getAndUpdate {
+            newSection
+        }
+    }
+
+    fun updateSectionDataId(newSection: Int) {
+        _sectionDataIdToSend.getAndUpdate {
             newSection
         }
     }
