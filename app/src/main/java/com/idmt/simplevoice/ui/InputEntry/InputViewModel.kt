@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.idmt.simplevoice.ui.network.RetrofitMoviesNetworkApi
 import com.idmt.simplevoice.ui.network.model.category_response.CategoryDropDownResponse
+import com.idmt.simplevoice.ui.network.model.zone_response.ZonDropDownResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -22,12 +23,29 @@ class InputViewModel : ViewModel() {
 
     val subCategories: MutableStateFlow<MutableList<Pair<String, Int>>> get() = _subCategories
 
+
+
+
+    val _zoneDistrict: MutableStateFlow<MutableList<Pair<String, Int>>> =
+        MutableStateFlow(mutableListOf())
+
+    val zoneDistrict: MutableStateFlow<MutableList<Pair<String, Int>>> get() = _zoneDistrict
+
+
+
+    val _zoneStations: MutableStateFlow<MutableList<Pair<String, Int>>> =
+        MutableStateFlow(mutableListOf())
+
+    val zoneStations: MutableStateFlow<MutableList<Pair<String, Int>>> get() = _zoneStations
+
+
+    val _zones: MutableStateFlow<MutableList<Pair<String, Int>>> =
+        MutableStateFlow(mutableListOf())
+    val zones: MutableStateFlow<MutableList<Pair<String, Int>>> get() = _zones
+
     var categoryDropDownResponse = CategoryDropDownResponse()
+    var zonesDropDownResponse = ZonDropDownResponse()
 
-
-    init {
-        getCategories()
-    }
 
     fun getCategories() {
 
@@ -50,6 +68,20 @@ class InputViewModel : ViewModel() {
 
     }
 
+    fun getZones() {
+        viewModelScope.launch {
+                zonesDropDownResponse = retrofitMoviesNetworkApi.getZoneDropDown()
+                val zonePairs = mutableListOf(Pair("", 0))
+                zonesDropDownResponse.forEachIndexed { index, zone ->
+                    zonePairs.add(Pair(zone.zone, zone.zoneId))
+                }
+                _zones.update {
+                    zonePairs
+                }
+        }
+
+    }
+
     fun showLoading() {
         _categoryState.update {
             UiState.Loading()
@@ -65,6 +97,29 @@ class InputViewModel : ViewModel() {
             subCategoryPairs
         }
     }
+
+    fun updateZoneDistricts(id: Int) {
+        val zoneDistricts = mutableListOf(Pair("", 0))
+        zonesDropDownResponse.find { it.zoneId == id }?.district?.forEachIndexed { index, district ->
+            zoneDistricts.add(Pair(district.district, district.districtId))
+        }
+        zoneDistrict.update {
+            zoneDistricts
+        }
+    }
+
+
+    fun updateZoneStations(id: Int) {
+//        val zoneStations = mutableListOf(Pair("", 0))
+//        zonesDropDownResponse.find { it.zoneId == id }?.district?.forEachIndexed { index, district ->
+//            zoneDistricts.add(Pair(district.district, district.districtId))
+//        }
+//        zonesDropDownResponse.filter { it.district.filter { it.districtId == id } }.size
+//        zoneStations.update {
+//            zoneDistricts
+//        }
+    }
+
 
 
     sealed class UiState {

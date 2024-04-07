@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +31,14 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
     var textEnterd by remember { mutableStateOf("") }
     val uiState by inputViewModel.categoryState.collectAsState()
     val subCategory by inputViewModel.subCategories.collectAsState()
+    val zones by inputViewModel.zones.collectAsState()
+    val zoneDistricts by inputViewModel.zoneDistrict.collectAsState()
+
+
+    LaunchedEffect(Unit) {
+        inputViewModel.getCategories()
+        //inputViewModel.getZones()
+    }
 
     Column(
         modifier = modifier
@@ -50,7 +59,6 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
 
             is InputViewModel.UiState.Success -> {
                 val CategoriesPairs = (uiState as InputViewModel.UiState.Success).data
-//                Text(text = (uiState as InputViewModel.UiState.Success).data.toString())
                 DropDownEditText(
                     modifier = modifier,
                     label = stringResource(R.string.input_type),
@@ -74,27 +82,28 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
                     modifier = modifier,
                     label = stringResource(R.string.zone),
                     onChoosenId = {
-                        Log.e("chosen", it.toString())
+
                     },
-                    listToBeShown = mutableListOf(Pair("test", 1), Pair("test2", 2))
+                    listToBeShown = zones
                 )
 
                 DropDownEditText(
                     modifier = modifier,
                     label = stringResource(R.string.district),
                     onChoosenId = {
-                        Log.e("chosen", it.toString())
+                        inputViewModel.updateSubCategories(it)
+
                     },
-                    listToBeShown = mutableListOf(Pair("test", 1), Pair("test2", 2))
+                    listToBeShown = zoneDistricts
                 )
 
                 DropDownEditText(
                     modifier = modifier,
                     label = stringResource(R.string.station),
                     onChoosenId = {
-                        Log.e("chosen", it.toString())
+
                     },
-                    listToBeShown = mutableListOf(Pair("test", 1), Pair("test2", 2))
+                    listToBeShown = subCategory
                 )
 
                 EditText(textEnterd = textEnterd) { text ->
