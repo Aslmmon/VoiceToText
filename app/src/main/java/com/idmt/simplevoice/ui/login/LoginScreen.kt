@@ -38,21 +38,22 @@ fun LoginScreen(modifier: Modifier, navigateToHomeScreen: () -> Unit) {
 
 
     LaunchedEffect(loading) {
-        if (loading && email.equals("admin") && password.equals("admin")) {
-            delay(3000)
+      //  if (loading && email.equals("admin") && password.equals("admin")) {
+         //   delay(3000)
             navigateToHomeScreen.invoke()
-            context.dataStore.edit { prefrences ->
-                prefrences[userType] = userTypeEnum.Normal.name
-            }
-        } else if (loading && email.equals("superadmin") && password.equals("admin")) {
-            delay(3000)
-            navigateToHomeScreen.invoke()
-            context.dataStore.edit { prefrences ->
-                prefrences[userType] = userTypeEnum.SuperUser.name
-            }
-        } else {
-            loading = false
-        }
+//            context.dataStore.edit { prefrences ->
+//                prefrences[userType] = userTypeEnum.Normal.name
+//            }
+    //    }
+//        else if (loading && email.equals("superadmin") && password.equals("admin")) {
+//            delay(3000)
+//            navigateToHomeScreen.invoke()
+//            context.dataStore.edit { prefrences ->
+//                prefrences[userType] = userTypeEnum.SuperUser.name
+//            }
+//        } else {
+//            loading = false
+//        }
     }
 
     Column(

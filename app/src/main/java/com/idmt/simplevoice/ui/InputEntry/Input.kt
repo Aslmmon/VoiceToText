@@ -19,10 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.idmt.simplevoice.R
+import com.idmt.simplevoice.ui.InputEntry.components.CurrentDateView
 import com.idmt.simplevoice.ui.InputEntry.components.DropDownEditText
 import com.idmt.simplevoice.ui.databse.components.ShowLoadingView
 import com.idmt.simplevoice.ui.home.components.EditText
 import com.idmt.simplevoice.ui.home.components.LoadingButton
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @Composable
 fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
@@ -33,18 +36,20 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
     val zones by inputViewModel.zones.collectAsState()
     val zoneDistricts by inputViewModel.zoneDistrict.collectAsState()
     val zoneStations by inputViewModel.zoneStations.collectAsState()
-
+    val sdf = SimpleDateFormat("dd/MM/yyyy")
+    val currentDate = sdf.format(Date())
 
     LaunchedEffect(Unit) {
         inputViewModel.getCategories()
         inputViewModel.getZones()
+        inputViewModel.updateDate(currentDate)
     }
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 15.dp, vertical = 5.dp),
+            .padding(vertical = 5.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -105,7 +110,7 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
                     },
                     listToBeShown = zoneStations
                 )
-
+                CurrentDateView(modifier = modifier.padding(horizontal = 15.dp), currentDate =currentDate )
                 EditText(textEnterd = textEnterd) { text ->
                     textEnterd = text
                     inputViewModel.updateInputData(textEnterd)

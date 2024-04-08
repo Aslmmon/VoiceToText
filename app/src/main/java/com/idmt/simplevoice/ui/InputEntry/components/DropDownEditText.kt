@@ -37,11 +37,13 @@ fun DropDownEditText(
     var inputType by remember { mutableStateOf("") }
     var expandedCategory by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier.padding(vertical = 5.dp)) {
+    Column(modifier = modifier.padding(vertical = 5.dp, horizontal = 15.dp)) {
         OutlinedTextField(
-            modifier = modifier.clickable {
-                expandedCategory = true
-            }.fillMaxWidth(),
+            modifier = modifier
+                .clickable {
+                    expandedCategory = true
+                }
+                .fillMaxWidth(),
             value = inputType,
             label = { Text(text = label) },
             onValueChange = { inputType = it },
@@ -67,4 +69,22 @@ fun DropDownEditText(
         }
     }
 
+}
+
+@Composable
+fun CurrentDateView(modifier: Modifier, currentDate: String) {
+    OutlinedTextField(
+        modifier = modifier
+            .clickable {
+               // expandedCategory = true
+            }
+            .fillMaxWidth(),
+        value = currentDate,
+        label = { Text(text = "Entry Date") },
+        onValueChange = { },
+        enabled = false,
+        trailingIcon = {
+            Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = "")
+        }
+    )
 }

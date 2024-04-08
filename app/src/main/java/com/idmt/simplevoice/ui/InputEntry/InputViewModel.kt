@@ -96,12 +96,16 @@ class InputViewModel : ViewModel() {
         }
     }
 
+    fun updateDate(text: String) {
+        date.value = text
+    }
+
 
     fun submitInputEntry() {
         viewModelScope.launch {
             try {
                 retrofitMoviesNetworkApi.submitInputEntry(
-                    date = "12/04/2024",
+                    date = date.value,
                     categoryId = categoryId.value,
                     subCategoryId = subCategoryId.value,
                     zoneId = zoneId.value,
