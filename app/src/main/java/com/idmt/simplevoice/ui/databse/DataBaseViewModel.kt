@@ -48,6 +48,9 @@ class DataBaseViewModel : ViewModel() {
     fun getComments(sectionId: Int) {
 
         viewModelScope.launch {
+            _CommentsState.update {
+                CommentsUiState.Loading()
+            }
             try {
                 val response = retrofitMoviesNetworkApi.getSectionComments(sectionId)
                 _CommentsState.update {
@@ -68,7 +71,7 @@ class DataBaseViewModel : ViewModel() {
             try {
                 val response =
                     retrofitMoviesNetworkApi.submitSectionComment(sectionId, comment, userId)
-                getComments(sectionId)
+                //  getComments(sectionId)
                 _CommentsState.update {
                     CommentsUiState.SubmitSuccess(response)
                 }
@@ -102,7 +105,7 @@ class DataBaseViewModel : ViewModel() {
     }
 
     sealed class CommentsUiState {
-        data class Success(val data: GetUserCommentsResponse) : CommentsUiState()
+        data class Success(val data: GetUserCommentsResponse?) : CommentsUiState()
         data class SubmitSuccess(val commentSuccessResponse: CommentsSuccessResponse) :
             CommentsUiState()
 

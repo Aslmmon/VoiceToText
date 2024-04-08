@@ -65,8 +65,7 @@ private interface RetrofitNetworkApi {
     @GET(value = "/api/InputEntry/CategoryDropdown")
     suspend fun getCategoryDropDown(): CategoryDropDownResponse
 
-
-    @GET(value = "/api/Section/Getusercommentssectionddata")
+    @GET(value = "/api/InputEntry/ZoneDropdown")
     suspend fun getZoneDropDown(): ZonDropDownResponse
 
 
