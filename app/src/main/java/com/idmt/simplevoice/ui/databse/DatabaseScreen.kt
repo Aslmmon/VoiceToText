@@ -208,6 +208,17 @@ fun itemView(
                     painter = painterResource(id = R.drawable.disapprove),
                     contentDescription = ""
                 )
+                Image(
+                    modifier = modifier
+                        .size(15.dp)
+                        .combinedClickable(onClick = {
+                            onEditClicked.invoke()
+                        }, onLongClick = {
+                            onUpdateClicked.invoke()
+                        }),
+                    painter = painterResource(id = R.drawable.pencil),
+                    contentDescription = ""
+                )
 
             } else {
                 Image(
