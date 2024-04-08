@@ -109,15 +109,22 @@ class RetrofitMoviesNetworkApi {
     suspend fun getCategoryDropDown() =
         networkApi.getCategoryDropDown()
 
-    suspend fun submitInputEntry() =
+    suspend fun submitInputEntry(
+        date: String,
+        categoryId: Int,
+        subCategoryId: Int,
+        zoneId: Int,
+        stationId: Int,
+        inputData: String
+    ) =
         networkApi.submitInputEntry(
             id = 0,
-            EntryDate = "",
-            CategoryId = 0,
-            SubCategoryId = 0,
-            ZoneId = 0,
-            StationId = 0,
-            InputData = ""
+            EntryDate = date,
+            CategoryId = categoryId,
+            SubCategoryId = subCategoryId,
+            ZoneId = zoneId,
+            StationId = stationId,
+            InputData = inputData
         )
 }
 

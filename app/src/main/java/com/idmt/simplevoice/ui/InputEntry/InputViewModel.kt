@@ -1,5 +1,9 @@
 package com.idmt.simplevoice.ui.InputEntry
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.idmt.simplevoice.ui.network.RetrofitMoviesNetworkApi
@@ -43,6 +47,13 @@ class InputViewModel : ViewModel() {
     var categoryDropDownResponse = CategoryDropDownResponse()
     var zonesDropDownResponse = ZonDropDownResponse()
 
+    val categoryId = mutableStateOf(0)
+    val subCategoryId = mutableStateOf(0)
+    val zoneId = mutableStateOf(0)
+    val districtId = mutableStateOf(0)
+    val stationId = mutableStateOf(0)
+    val date = mutableStateOf("")
+    val inputData = mutableStateOf("")
 
     fun getCategories() {
 
@@ -85,7 +96,26 @@ class InputViewModel : ViewModel() {
         }
     }
 
+
+    fun submitInputEntry() {
+        viewModelScope.launch {
+            try {
+                retrofitMoviesNetworkApi.submitInputEntry(
+                    date = "12/04/2024",
+                    categoryId = categoryId.value,
+                    subCategoryId = subCategoryId.value,
+                    zoneId = zoneId.value,
+                    stationId = stationId.value,
+                    inputData = inputData.value
+                )
+            } catch (e: Exception) {
+
+            }
+        }
+    }
+
     fun updateSubCategories(id: Int) {
+        categoryId.value = id
         val subCategoryPairs = mutableListOf(Pair("", 0))
         categoryDropDownResponse.find { it.categoryId == id }?.subCategory?.forEachIndexed { index, subCategory ->
             subCategoryPairs.add(Pair(subCategory.subCategoryName, subCategory.subCategoryId))
@@ -95,7 +125,15 @@ class InputViewModel : ViewModel() {
         }
     }
 
+    fun selectSubCategory(id: Int) {
+        subCategoryId.value = id
+    }
+
+    /**
+     * zone
+     */
     fun updateZoneDistricts(id: Int) {
+        zoneId.value = id
         val zoneDistricts = mutableListOf(Pair("", 0))
         zonesDropDownResponse.find { it.zoneId == id }?.district?.forEachIndexed { index, district ->
             zoneDistricts.add(Pair(district.district, district.districtId))
@@ -105,8 +143,12 @@ class InputViewModel : ViewModel() {
         }
     }
 
+    /**
+     * districtId
+     */
 
     fun updateZoneStations(id: Int) {
+        districtId.value = id
         val zoneStations = mutableListOf(Pair("", 0))
         zonesDropDownResponse.map {
             val destrict = it.district.find { it.districtId == id }
@@ -120,6 +162,13 @@ class InputViewModel : ViewModel() {
         }
     }
 
+    fun selectZoneStation(id: Int) {
+        stationId.value = id
+    }
+
+    fun updateInputData(text: String) {
+        inputData.value = text
+    }
 
     sealed class UiState {
         data class Success(val data: MutableList<Pair<String, Int>>) : UiState()

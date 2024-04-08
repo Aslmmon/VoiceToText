@@ -73,7 +73,7 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
                     modifier = modifier,
                     label = stringResource(R.string.sub_type),
                     onChoosenId = {
-                        Log.e("chosen", it.toString())
+                        inputViewModel.selectSubCategory(it)
                     },
                     listToBeShown = subCategory
                 )
@@ -101,17 +101,19 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
                     modifier = modifier,
                     label = stringResource(R.string.station),
                     onChoosenId = {
-
+                        inputViewModel.selectZoneStation(it)
                     },
                     listToBeShown = zoneStations
                 )
 
                 EditText(textEnterd = textEnterd) { text ->
                     textEnterd = text
+                    inputViewModel.updateInputData(textEnterd)
                 }
 
                 LoadingButton(modifier = modifier, showIcon = false, onClick = {
                     loading = true
+                    inputViewModel.submitInputEntry()
                 }, loading = loading, buttonText = stringResource(R.string.submit))
             }
         }
