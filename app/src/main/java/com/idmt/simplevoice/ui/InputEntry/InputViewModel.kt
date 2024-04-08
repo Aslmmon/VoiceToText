@@ -24,13 +24,10 @@ class InputViewModel : ViewModel() {
     val subCategories: MutableStateFlow<MutableList<Pair<String, Int>>> get() = _subCategories
 
 
-
-
     val _zoneDistrict: MutableStateFlow<MutableList<Pair<String, Int>>> =
         MutableStateFlow(mutableListOf())
 
     val zoneDistrict: MutableStateFlow<MutableList<Pair<String, Int>>> get() = _zoneDistrict
-
 
 
     val _zoneStations: MutableStateFlow<MutableList<Pair<String, Int>>> =
@@ -70,14 +67,14 @@ class InputViewModel : ViewModel() {
 
     fun getZones() {
         viewModelScope.launch {
-                zonesDropDownResponse = retrofitMoviesNetworkApi.getZoneDropDown()
-                val zonePairs = mutableListOf(Pair("", 0))
-                zonesDropDownResponse.forEachIndexed { index, zone ->
-                    zonePairs.add(Pair(zone.zone, zone.zoneId))
-                }
-                _zones.update {
-                    zonePairs
-                }
+            zonesDropDownResponse = retrofitMoviesNetworkApi.getZoneDropDown()
+            val zonePairs = mutableListOf(Pair("", 0))
+            zonesDropDownResponse.forEachIndexed { index, zone ->
+                zonePairs.add(Pair(zone.zone, zone.zoneId))
+            }
+            _zones.update {
+                zonePairs
+            }
         }
 
     }
@@ -110,16 +107,18 @@ class InputViewModel : ViewModel() {
 
 
     fun updateZoneStations(id: Int) {
-//        val zoneStations = mutableListOf(Pair("", 0))
-//        zonesDropDownResponse.find { it.zoneId == id }?.district?.forEachIndexed { index, district ->
-//            zoneDistricts.add(Pair(district.district, district.districtId))
-//        }
-//        zonesDropDownResponse.filter { it.district.filter { it.districtId == id } }.size
-//        zoneStations.update {
-//            zoneDistricts
-//        }
-    }
+        val zoneStations = mutableListOf(Pair("", 0))
+        zonesDropDownResponse.map {
+            val destrict = it.district.find { it.districtId == id }
+            destrict?.station?.forEachIndexed { index, station ->
+                zoneStations.add(Pair(station.stationName, station.stationId))
+            }
+        }
 
+        _zoneStations.update {
+            zoneStations
+        }
+    }
 
 
     sealed class UiState {

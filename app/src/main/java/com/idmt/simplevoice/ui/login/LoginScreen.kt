@@ -44,6 +44,12 @@ fun LoginScreen(modifier: Modifier, navigateToHomeScreen: () -> Unit) {
             context.dataStore.edit { prefrences ->
                 prefrences[userType] = userTypeEnum.Normal.name
             }
+        } else if (loading && email.equals("superadmin") && password.equals("admin")) {
+            delay(3000)
+            navigateToHomeScreen.invoke()
+            context.dataStore.edit { prefrences ->
+                prefrences[userType] = userTypeEnum.SuperUser.name
+            }
         } else {
             loading = false
         }

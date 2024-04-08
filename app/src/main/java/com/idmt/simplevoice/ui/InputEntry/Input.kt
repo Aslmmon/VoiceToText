@@ -1,7 +1,6 @@
 package com.idmt.simplevoice.ui.InputEntry
 
 import android.util.Log
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -33,11 +32,12 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
     val subCategory by inputViewModel.subCategories.collectAsState()
     val zones by inputViewModel.zones.collectAsState()
     val zoneDistricts by inputViewModel.zoneDistrict.collectAsState()
+    val zoneStations by inputViewModel.zoneStations.collectAsState()
 
 
     LaunchedEffect(Unit) {
         inputViewModel.getCategories()
-        //inputViewModel.getZones()
+        inputViewModel.getZones()
     }
 
     Column(
@@ -82,7 +82,7 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
                     modifier = modifier,
                     label = stringResource(R.string.zone),
                     onChoosenId = {
-
+                        inputViewModel.updateZoneDistricts(it)
                     },
                     listToBeShown = zones
                 )
@@ -91,7 +91,7 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
                     modifier = modifier,
                     label = stringResource(R.string.district),
                     onChoosenId = {
-                        inputViewModel.updateSubCategories(it)
+                        inputViewModel.updateZoneStations(it)
 
                     },
                     listToBeShown = zoneDistricts
@@ -103,7 +103,7 @@ fun InputEntry(modifier: Modifier, inputViewModel: InputViewModel) {
                     onChoosenId = {
 
                     },
-                    listToBeShown = subCategory
+                    listToBeShown = zoneStations
                 )
 
                 EditText(textEnterd = textEnterd) { text ->
