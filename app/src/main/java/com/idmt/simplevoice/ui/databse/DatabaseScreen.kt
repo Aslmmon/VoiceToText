@@ -69,14 +69,20 @@ fun Database(
         }
     var user = userType.collectAsState(initial = "")
     var showBottomSheet by remember { mutableStateOf(false) }
-    val comments by viewModel.Comments.collectAsState()
-
+//    val comments by viewModel.Comments.collectAsState()
+    val commentState by viewModel.CommentsState.collectAsState()
 
 
 
     LaunchedEffect(sectionsState) {
         viewModel.getList(1, sectionsState.value)
 
+    }
+
+    LaunchedEffect(showBottomSheet) {
+//        if (showBottomSheet) {
+//        //    viewModel.getComments(279)
+//        }
     }
     when (uiState) {
         is DataBaseViewModel.UiState.Loading -> {
@@ -122,7 +128,9 @@ fun Database(
                     items(response) { item ->
                         itemView(modifier, item, user.value,
                             onUpdateClicked = {
-                                showBottomSheet = true
+                               // showBottomSheet = true
+                                viewModel.getComments(279)
+
                             }, onApproveClicked = {
 
                             }, onDisapproveClicked = {
@@ -143,13 +151,13 @@ fun Database(
                     }
                 }
 
-                if (showBottomSheet) {
-                    BottomSheet(modifier, onDismiss = {
-                        showBottomSheet = false
-                    }, updateText = { newText ->
-                        viewModel.updateComment(newText)
-                    },comments)
-                }
+//                if (showBottomSheet) {
+//                    BottomSheet(modifier, onDismiss = {
+//                        showBottomSheet = false
+//                    }, updateText = { newText ->
+//                        viewModel.updateComment(newText)
+//                    }, comments)
+//                }
             }
 
         }
@@ -158,6 +166,33 @@ fun Database(
             Text((uiState as DataBaseViewModel.UiState.Error).message)
 
         }
+
+    }
+
+    when (commentState) {
+        is DataBaseViewModel.CommentsUiState.Loading -> {
+            CircularProgressIndicator()
+        }
+
+        is DataBaseViewModel.CommentsUiState.Success -> {
+             showBottomSheet = true
+            if (showBottomSheet) {
+                BottomSheet(modifier, onDismiss = {
+                    showBottomSheet = false
+                }, updateText = { newText ->
+                    viewModel.submitComments(279, newText, 8)
+                }, (commentState as DataBaseViewModel.CommentsUiState.Success).data)
+            }
+        }
+
+        is DataBaseViewModel.CommentsUiState.SubmitSuccess -> {
+            Text(text = "Done")
+            CircularProgressIndicator()
+
+        }
+
+        is DataBaseViewModel.CommentsUiState.Error -> {}
+
 
     }
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
@@ -19,7 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +28,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.idmt.simplevoice.ui.network.model.comments_model.GetUserCommentsResponse
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +36,7 @@ fun BottomSheet(
     modifier: Modifier,
     onDismiss: () -> Unit,
     updateText: (String) -> Unit,
-    comments: MutableList<String>
+    comments: GetUserCommentsResponse
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var text by remember { mutableStateOf("") }
@@ -63,13 +62,35 @@ fun BottomSheet(
         },
         sheetState = sheetState
     ) {
-        LazyColumn(modifier = modifier.padding(10.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        LazyColumn(
+            modifier = modifier.padding(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             items(comments) {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text(modifier = modifier, text = "Admin", fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
-                    Text(modifier = modifier, text = it, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                    Text(modifier = modifier, text = "Just Now", fontSize = 12.sp, fontStyle = FontStyle.Italic)
-                    Divider(modifier = modifier.fillMaxWidth().height(1.dp), color = Color.Gray)
+                    Text(
+                        modifier = modifier,
+                        text = "Admin",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                    Text(
+                        modifier = modifier,
+                        text = it.comments,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        modifier = modifier,
+                        text = "Just Now",
+                        fontSize = 12.sp,
+                        fontStyle = FontStyle.Italic
+                    )
+                    Divider(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .height(1.dp), color = Color.Gray
+                    )
 
                 }
             }

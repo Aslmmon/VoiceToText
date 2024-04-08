@@ -6,6 +6,8 @@ import android.util.Log
 import androidx.core.os.trace
 import com.idmt.simplevoice.ui.network.model.ListResponse
 import com.idmt.simplevoice.ui.network.model.category_response.CategoryDropDownResponse
+import com.idmt.simplevoice.ui.network.model.comments_model.CommentsSuccessResponse
+import com.idmt.simplevoice.ui.network.model.comments_model.GetUserCommentsResponse
 import com.idmt.simplevoice.ui.network.model.zone_response.ZonDropDownResponse
 import okhttp3.Call
 import okhttp3.Interceptor
@@ -15,6 +17,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import okio.GzipSource
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -62,8 +65,22 @@ private interface RetrofitNetworkApi {
     @GET(value = "/api/InputEntry/CategoryDropdown")
     suspend fun getCategoryDropDown(): CategoryDropDownResponse
 
-    @GET(value = "/api/InputEntry/ZoneDropdown")
+
+    @GET(value = "/api/Section/Getusercommentssectionddata")
     suspend fun getZoneDropDown(): ZonDropDownResponse
+
+
+    @FormUrlEncoded
+    @POST(value = "/api/Section/sp_insert_usercommnetssectiondata")
+    suspend fun submitUserComments(
+        @Field("sectiondataid") sectiondataid: Int,
+        @Field("comments") comments: String,
+        @Field("userid") userid: Int = 8
+    ): CommentsSuccessResponse
+
+
+    @GET(value = "/api/Section/Getusercommentssectionddata")
+    suspend fun getUserComments(@Query("secdataid") sectiondataid: Int): GetUserCommentsResponse
 }
 
 class RetrofitMoviesNetworkApi {
@@ -108,6 +125,14 @@ class RetrofitMoviesNetworkApi {
 
     suspend fun getCategoryDropDown() =
         networkApi.getCategoryDropDown()
+
+    suspend fun getSectionComments(sectionid: Int) =
+        networkApi.getUserComments(sectionid)
+
+
+    suspend fun submitSectionComment(sectionid: Int, comments: String, userId: Int) =
+        networkApi.submitUserComments(sectionid, comments, userId)
+
 
     suspend fun submitInputEntry(
         date: String,
