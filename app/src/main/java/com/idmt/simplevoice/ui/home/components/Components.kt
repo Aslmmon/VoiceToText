@@ -53,7 +53,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.idmt.simplevoice.ui.InputEntry.components.DropDownEditText
-import com.idmt.simplevoice.ui.databse.SECIONS
 import com.idmt.simplevoice.ui.home.languagesList
 
 @Composable

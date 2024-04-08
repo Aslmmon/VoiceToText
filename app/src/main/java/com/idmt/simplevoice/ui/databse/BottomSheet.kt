@@ -2,6 +2,7 @@ package com.idmt.simplevoice.ui.databse
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -62,49 +63,57 @@ fun BottomSheet(
         },
         sheetState = sheetState
     ) {
-        LazyColumn(
-            modifier = modifier.padding(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+        Column(
+            modifier = modifier.fillMaxHeight(),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            items(comments) {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text(
-                        modifier = modifier,
-                        text = "Admin",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                    Text(
-                        modifier = modifier,
-                        text = it.comments,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        modifier = modifier,
-                        text = "Just Now",
-                        fontSize = 12.sp,
-                        fontStyle = FontStyle.Italic
-                    )
-                    Divider(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .height(1.dp), color = Color.Gray
-                    )
+            LazyColumn(
+                modifier = modifier
+                    .padding(5.dp)
+                    .weight(1.2f),
+                verticalArrangement = Arrangement.SpaceBetween,
+            ) {
+                items(comments.take(8)) {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Text(
+                            modifier = modifier,
+                            text = "Admin",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                        Text(
+                            modifier = modifier,
+                            text = it.comments,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            modifier = modifier,
+                            text = "Just Now",
+                            fontSize = 12.sp,
+                            fontStyle = FontStyle.Italic
+                        )
+                        Divider(
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .height(1.dp), color = Color.Gray
+                        )
 
+                    }
                 }
             }
+            OutlinedTextField(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 50.dp, horizontal = 10.dp),
+                value = text,
+                onValueChange = {
+                    text = it
+                }, trailingIcon = trailingIconView
+            )
         }
 
-        OutlinedTextField(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = 50.dp, horizontal = 10.dp),
-            value = text,
-            onValueChange = {
-                text = it
-            }, trailingIcon = trailingIconView
-        )
+
     }
 
 }

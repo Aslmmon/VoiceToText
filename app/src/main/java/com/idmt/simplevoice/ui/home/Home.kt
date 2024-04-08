@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.idmt.simplevoice.R
 import com.idmt.simplevoice.SharedViewModel
 import com.idmt.simplevoice.recognition.VoiceTextParser
-import com.idmt.simplevoice.ui.databse.SECIONS
+import com.idmt.simplevoice.ui.databse.data.SECIONS
 import com.idmt.simplevoice.ui.home.components.CategoryChooser
 import com.idmt.simplevoice.ui.home.components.EditText
 import com.idmt.simplevoice.ui.home.components.LoadingButton

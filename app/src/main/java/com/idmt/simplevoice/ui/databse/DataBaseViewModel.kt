@@ -1,16 +1,13 @@
 package com.idmt.simplevoice.ui.databse
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.idmt.simplevoice.ui.databse.data.SECIONS
 import com.idmt.simplevoice.ui.network.RetrofitMoviesNetworkApi
 import com.idmt.simplevoice.ui.network.model.ListResponse
 import com.idmt.simplevoice.ui.network.model.comments_model.CommentsSuccessResponse
 import com.idmt.simplevoice.ui.network.model.comments_model.GetUserCommentsResponse
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -25,13 +22,9 @@ class DataBaseViewModel : ViewModel() {
     val SectionStates: MutableStateFlow<SECIONS> get() = _SectionStates
 
 
-//    private val _Comments: MutableStateFlow<MutableList<String>> = MutableStateFlow(mutableListOf())
-//    val Comments: StateFlow<MutableList<String>> = _Comments.asStateFlow()
-
-
-    private var _CommentsState: MutableStateFlow<CommentsUiState> =
-        MutableStateFlow(CommentsUiState.Loading())
-    val CommentsState: MutableStateFlow<CommentsUiState> get() = _CommentsState
+    private var _CommentsState: MutableStateFlow<CommentsUiState?> =
+        MutableStateFlow(null)
+    val CommentsState: MutableStateFlow<CommentsUiState?> get() = _CommentsState
 
 
     suspend fun getList(roleid: Int, sectionId: Int) {
@@ -52,7 +45,7 @@ class DataBaseViewModel : ViewModel() {
     }
 
 
-     fun getComments(sectionId: Int) {
+    fun getComments(sectionId: Int) {
 
         viewModelScope.launch {
             try {
@@ -70,11 +63,12 @@ class DataBaseViewModel : ViewModel() {
     }
 
 
-     fun submitComments(sectionId: Int, comment: String, userId: Int) {
+    fun submitComments(sectionId: Int, comment: String, userId: Int) {
         viewModelScope.launch {
             try {
-                var response =
+                val response =
                     retrofitMoviesNetworkApi.submitSectionComment(sectionId, comment, userId)
+                getComments(sectionId)
                 _CommentsState.update {
                     CommentsUiState.SubmitSuccess(response)
                 }
@@ -93,11 +87,6 @@ class DataBaseViewModel : ViewModel() {
         }
     }
 
-//    fun updateComment(text: String) {
-//        _Comments.value.add(text)
-//    }
-
-
     fun updateSections(section: SECIONS) {
         _SectionStates.update {
             section
@@ -114,7 +103,9 @@ class DataBaseViewModel : ViewModel() {
 
     sealed class CommentsUiState {
         data class Success(val data: GetUserCommentsResponse) : CommentsUiState()
-        data class SubmitSuccess(val commentSuccessResponse: CommentsSuccessResponse) : CommentsUiState()
+        data class SubmitSuccess(val commentSuccessResponse: CommentsSuccessResponse) :
+            CommentsUiState()
+
         data class Error(val message: String) : CommentsUiState()
         class Loading : CommentsUiState()
 
